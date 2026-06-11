@@ -11,55 +11,21 @@
     - python3-dev
     - python3-pip
 
-- name: create roboshop system user
-  ansible.builtin.user:
-    name: roboshop
-    home: /app
-    shell: /sbin/nologin
-    system: true
-    comment: roboshop system user
 
-- name: removing directory if it exists
-  ansible.builtin.file:
-    path: /app
-    state: absent
-
-- name: Remove a zip file if it exists
-  ansible.builtin.file:
-    path: /tmp/payment.zip
-    state: absent
-
-- name: Creating directory
-  ansible.builtin.file:
-    path: /app
-    state: directory
-
-- name: Downloading code
-  get_url:
-    url: https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip
-    dest: /tmp/payment.zip
-
-- name: unzip the file
-  unarchive:
-    src: /tmp/payment.zip
-    dest: /app
-    remote_src: yes
+- name: application setup
+  import_role:
+    name: common
+    tasks_from: app_setup
 
 - name: Install dependencies from requirements.txt
   command: pip3 install -r /app/requirements.txt --break-system-packages --ignore-installed typing_extensions
 
-- name: copy shipping service
-  template:
-    src: payment.service.j2
-    dest: /etc/systemd/system/payment.service
+- name: "copy {{ component }} service"
+  import_role:
+    name: commom
+    tasks_from: copy_service
 
-- name: deamon reload
-  systemd:
-    name: payment
-    daemon_reload: true
-
-- name: enable and start payment
-  service:
-    name: payment
-    state: restarted
-    enabled: yes
+- name: Restart service
+  import_role:
+    name: commom
+    tasks_from: service_restart

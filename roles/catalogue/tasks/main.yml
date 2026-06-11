@@ -1,6 +1,7 @@
-- name: Update apt cache
-  apt:
-    update_cache: yes
+- name: Update cache
+  import_role:
+    name: commom
+    tasks_from: update_cache
 
 - name: Install prerequisites
   apt:
@@ -11,92 +12,31 @@
       - unzip
     state: present
 
-- name: Download NodeSource setup script
-  get_url:
-    url: https://deb.nodesource.com/setup_20.x
-    dest: /tmp/nodesource_setup.sh
-    mode: '0755'
+- name: application setup
+  import_role:
+    name: common
+    tasks_from: app_setup
 
-- name: Run NodeSource setup script
-  shell: bash /tmp/nodesource_setup.sh
-  args:
-    executable: /bin/bash
+- name: Install Nodejs
+  import_role:
+    name: commom
+    tasks_from: nodejs
 
-- name: Install nodejs
-  apt:
-    name: nodejs
-    state: present
+- name: "copy {{ component }} service"
+  import_role:
+    name: commom
+    tasks_from: copy_service
 
-- name: Nodejs version
-  command: node -v
-  register: node_output
 
-- name: Show nodejs version
-  debug:
-    var: node_output
+- name: Mongodb setup
+  import_role:
+    name: commom
+    tasks_from: mongodb_setup
 
-- name: create roboshop system user
-  ansible.builtin.user:
-    name: roboshop
-    home: /app
-    shell: /sbin/nologin
-    system: true
-    comment: roboshop system user
-
-- name: removing directory if it exists
-  ansible.builtin.file:
-    path: /app
-    state: absent
-
-- name: Remove a zip file if it exists
-  ansible.builtin.file:
-    path: /tmp/catalogue.zip
-    state: absent
-
-- name: Creating directory
-  ansible.builtin.file:
-    path: /app
-    state: directory
-
-- name: Downloading code
-  get_url:
-    url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
-    dest: /tmp/catalogue.zip
-
-- name: unzip the file
-  unarchive:
-    src: /tmp/catalogue.zip
-    dest: /app
-    remote_src: yes
-
-- name: Install Node.js dependencies from app direc
-  community.general.npm:
-    path: /app
-    state: present
-
-- name: copy catalogue service
-  template:
-    src: catalogue.service.j2
-    dest: /etc/systemd/system/catalogue.service
-
-- name: Downloading gpg key for mongodb repo
-  get_url:
-    url: https://pgp.mongodb.com/server-7.0.asc
-    dest: /tmp/mongodb.asc
-
-- name: convert gpg key to keyring format
-  command: 
-    cmd: gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor /tmp/mongodb.asc
-    creates: /usr/share/keyrings/mongodb-server-7.0.gpg
-
-- name: copy mongodb repo from local to destination
-  copy:
-    src: ./mongodb.list
-    dest: /etc/apt/sources.list.d/mongodb-org-7.0.list
-
-- name: Install cache
-  apt:
-    update_cache: yes
+- name: Update cache
+  import_role:
+    name: commom
+    tasks_from: update_cache
 
 - name: Install mongodb client
   package:
@@ -120,13 +60,10 @@
   tags:
   - mongodb
 
-- name: deamon reload
-  systemd:
-    name: catalogue
-    daemon_reload: true
+- name: Restart service
+  import_role:
+    name: commom
+    tasks_from: service_restart.yml
 
-- name: enable and start catalogue
-  service:
-    name: catalogue
-    state: restarted
-    enabled: yes
+
+

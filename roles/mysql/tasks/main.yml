@@ -11,11 +11,6 @@
     - mysql-server
     - python3-pymysql
 
-- name: Start and enable mysql
-  service:
-    name: mysql
-    state: started
-    enabled: yes
 
 - name: configuring root localhost configuration
   shell: mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH auth_socket;"
@@ -43,10 +38,10 @@
     replace: '0.0.0.0'
 
 
-- name: Restart mysql
-  service:
-    name: mysql
-    state: restarted
+- name: restart mysql
+  import_role:
+    name: common
+    tasks_from: service_restart
 
 
 

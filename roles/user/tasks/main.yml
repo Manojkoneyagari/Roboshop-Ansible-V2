@@ -12,81 +12,24 @@
       - unzip
     state: present
 
-- name: Download NodeSource setup script
-  get_url:
-    url: https://deb.nodesource.com/setup_20.x
-    dest: /tmp/nodesource_setup.sh
-    mode: '0755'
 
-- name: Run NodeSource setup script
-  shell: bash /tmp/nodesource_setup.sh
-  args:
-    executable: /bin/bash
+- name: application setup
+  import_role:
+    name: common
+    tasks_from: app_setup
 
-- name: Install nodejs
-  apt:
-    name: nodejs
-    state: present
+- name: Install Nodejs
+  import_role:
+    name: commom
+    tasks_from: nodejs
 
-- name: Nodejs version
-  command: node -v
-  register: node_output
+- name: "copy {{ component }} service"
+  import_role:
+    name: commom
+    tasks_from: copy_service
 
-- name: Show nodejs version
-  debug:
-    var: node_output
 
-- name: create roboshop system user
-  ansible.builtin.user:
-    name: roboshop
-    home: /app
-    shell: /sbin/nologin
-    system: true
-    comment: roboshop system user
-
-- name: removing directory if it exists
-  ansible.builtin.file:
-    path: /app
-    state: absent
-
-- name: Remove a zip file if it exists
-  ansible.builtin.file:
-    path: /tmp/catalogue.zip
-    state: absent
-
-- name: Creating directory
-  ansible.builtin.file:
-    path: /app
-    state: directory
-
-- name: Downloading code
-  get_url:
-    url: https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip
-    dest: /tmp/user.zip
-
-- name: unzip the file
-  unarchive:
-    src: /tmp/user.zip
-    dest: /app
-    remote_src: yes
-
-- name: Install Node.js dependencies from app direc
-  community.general.npm:
-    path: /app
-    state: present
-
-- name: copy user service
-  template:
-    src: user.service.j2
-    dest: /etc/systemd/system/user.service
-
-- name: deamon reload
-  systemd:
-    name: user
-    daemon_reload: true
-
-- name: enable and start user
-  service:
-    name: user
-    state: restarted
-    enabled: yes
+- name: Restart service
+  import_role:
+    name: commom
+    tasks_from: service_restart.yml
