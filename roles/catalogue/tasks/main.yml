@@ -1,6 +1,6 @@
 - name: Update cache
   import_role:
-    name: commom
+    name: common
     tasks_from: update_cache
 
 - name: Install prerequisites
@@ -19,23 +19,23 @@
 
 - name: Install Nodejs
   import_role:
-    name: commom
+    name: common
     tasks_from: nodejs
 
 - name: "copy {{ component }} service"
   import_role:
-    name: commom
+    name: common
     tasks_from: copy_service
 
 
 - name: Mongodb setup
   import_role:
-    name: commom
+    name: common
     tasks_from: mongodb_setup
 
 - name: Update cache
   import_role:
-    name: commom
+    name: common
     tasks_from: update_cache
 
 - name: Install mongodb client
@@ -62,7 +62,7 @@
 
 - name: Restart service
   import_role:
-    name: commom
+    name: common
     tasks_from: service_restart.yml
 
 
