@@ -9,12 +9,12 @@
 
 - name: Mongodb setup
   import_role:
-    name: commom
+    name: common
     tasks_from: mongodb_setup
 
 - name: Update cache
   import_role:
-    name: commom
+    name: common
     tasks_from: update_cache
 
 - name: Install mongodb
