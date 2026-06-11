@@ -23,7 +23,7 @@
 
 - name: "copy {{ component }} service"
   import_role:
-    name: commom
+    name: common
     tasks_from: copy_service
 
 
@@ -47,7 +47,7 @@
 
 - name: Restart service
   import_role:
-    name: commom
+    name: common
     tasks_from: service_restart
           
 
