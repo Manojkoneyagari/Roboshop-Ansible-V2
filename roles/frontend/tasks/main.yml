@@ -67,7 +67,8 @@
     dest: /etc/nginx/sites-enabled/roboshop
     state: link
 
-- name: Restart service
-  import_role:
-    name: common
-    tasks_from: service_restart
+- name: restart and enable frontend
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes
