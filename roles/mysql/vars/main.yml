@@ -1,1 +1,4 @@
 #Mysql_password: Manoj@123
+
+
+#ansible-playbook main.yaml -e "component=mysql" --ask-vault-password
