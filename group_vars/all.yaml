@@ -1,3 +1,5 @@
+mysql_password: Manoj@123
+
 MONGODB_HOST: mongodb.manojkoney.store
 REDIS_HOST: redis.manojkoney.store
 USER_HOST: user.manojkoney.store

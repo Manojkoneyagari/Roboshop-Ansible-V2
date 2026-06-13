@@ -13,8 +13,8 @@
 
 - name: printing password
   debug:
-    msg: "{{ Mysql_password }}"
-    
+    msg: "{{ mysql_password }}"
+
 - name: configuring root localhost configuration
   shell: mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH auth_socket;"
   ignore_errors: yes
@@ -23,7 +23,7 @@
   community.mysql.mysql_user:
     name: root
     host: "%"
-    password: "{{ Mysql_password }}"
+    password: "{{ mysql_password }}"
     priv: "*.*:ALL,GRANT"
     state: present 
     login_unix_socket: /var/run/mysqld/mysqld.sock
