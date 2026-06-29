@@ -15,9 +15,9 @@
   debug:
     msg: "{{ Mysql_password }}"
 
-- name: printing password from aws secret manager
-  debug:
-    msg: "{{ root_pass.secret }}"
+# - name: printing password from aws secret manager
+  #debug:
+ #   msg: "{{ root_pass.secret }}"
    # msg: "{{ root_pass['roboshop/secret'] }}"
 
 - name: configuring root localhost configuration
